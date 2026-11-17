@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ямигири — Культ Вечного Рая</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #070d14;
+        color: #d4dce4;
+        line-height: 1.7;
+        padding: 20px 20px 100px;
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    /* Снегопад */
+    #snowContainer { position: fixed; inset: 0; pointer-events: none; z-index: 5; overflow: hidden; }
+    .snow { position: absolute; top: -80px; user-select: none; will-change: transform; animation-name: snowfall; animation-timing-function: linear; animation-fill-mode: forwards; filter: drop-shadow(0 0 4px rgba(79,195,247,0.4)); }
+    @keyframes snowfall { 0% { transform: translateY(-80px) rotate(0deg);} 100% { transform: translateY(105vh) rotate(360deg);} }
+
+    .container { width: 100%; max-width: 1300px; min-height: 297mm; background-color: #0f1a26; border: 1px solid #1c2e44; border-radius: 8px; padding: 40px; box-shadow: 0 0 30px rgba(41,128,185,0.25); position: relative; z-index: 10; }
+
+    h1 { font-size: 2.2em; color: #3498db; text-align: center; margin-bottom: 10px; text-shadow: 0 0 12px rgba(52,152,219,0.6); letter-spacing: 1px; }
+    .subtitle { text-align: center; font-style: italic; color: #7f9db3; margin-bottom: 30px; font-size: 1.1em; }
+    h2 { font-size: 1.5em; color: #4fc3f7; margin-top: 35px; margin-bottom: 15px; border-bottom: 1px solid #1c2e44; padding-bottom: 8px; }
+    h3 { font-size: 1.2em; color: #81d4fa; margin-top: 20px; margin-bottom: 10px; }
+    p { margin-bottom: 15px; text-align: justify; }
+    .highlight { color: #29b6f6; font-weight: bold; }
+
+    ul.role-list { list-style: none; padding-left: 0; }
+    ul.role-list li { background-color: #142433; border-left: 3px solid #2980b9; padding: 10px 15px; margin-bottom: 8px; border-radius: 0 4px 4px 0; }
+    ul.role-list li strong { color: #4fc3f7; }
+
+    blockquote { background: #0b1520; border-left: 4px solid #1e5a8a; padding: 15px 20px; margin: 15px 0; font-style: italic; color: #a8bfd0; }
+
+    .footer { margin-top: 40px; text-align: center; font-size: 0.85em; color: #4a6278; border-top: 1px solid #16232f; padding-top: 15px; }
+
+    /* Навигация */
+    #navBar { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #16232f; position: relative; z-index: 2; }
+    #navBar button { background: #142433; color: #d4dce4; border: 1px solid #1c2e44; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 0.9em; font-weight: bold; transition: all 0.2s; }
+    #navBar button:hover { background: #1a3045; color: #81d4fa; }
+    #navBar button.active { background: #2980b9; color: #fff; border-color: #4fc3f7; box-shadow: 0 0 12px rgba(79,195,247,0.5); }
+
+    /* Панель форматирования */
+    #formatBar {
+        display: none;
+        position: sticky; top: 10px;
+        background: #0b1520;
+        border: 1px solid #2980b9;
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+        z-index: 500;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+    #formatBar.show { display: flex; }
+    #formatBar button {
+        background: #142433; color: #d4dce4;
+        border: 1px solid #1c2e44; padding: 6px 12px;
+        border-radius: 6px; cursor: pointer;
+        font-family: inherit; font-size: 0.9em; font-weight: bold;
+        min-width: 36px;
+        transition: all 0.2s;
+    }
+    #formatBar button:hover { background: #1a3045; color: #81d4fa; border-color: #4fc3f7; }
+    #formatBar .sep { width: 1px; height: 24px; background: #1c2e44; margin: 0 6px; }
+    #formatBar .label { color: #7f9db3; font-size: 0.75em; font-weight: normal; margin-right: 6px; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* Страницы */
+    .page { display: none; position: relative; z-index: 2; }
+    .page.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+
+    .img-placeholder { width: 100%; height: 220px; background: linear-gradient(135deg,#142433,#0b1520); border: 2px dashed #1e5a8a; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #4fc3f7; font-size: 2.5em; margin: 20px 0; text-align: center; position: relative; overflow: hidden; }
+    .img-placeholder small { font-size: 0.4em; color: #7f9db3; margin-top: 10px; font-weight: normal; }
+    .img-placeholder.filled { border: none; background: none; height: auto; padding: 0; }
+    .img-placeholder img { width: 100%; border-radius: 8px; display: block; }
+
+    /* Многоколоночный блок */
+    .content-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+    .content-columns > div { background: #142433; padding: 16px; border-radius: 8px; border-left: 3px solid #2980b9; }
+    .content-columns p { margin: 0; }
+    @media (max-width: 700px) { .content-columns { grid-template-columns: 1fr; } }
+
+    hr.content-divider { border: none; border-top: 1px solid #1c2e44; margin: 30px 0; }
+
+    /* Админ-кнопка */
+    #adminToggle { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: #2980b9; color: #fff; border: 2px solid #4fc3f7; font-size: 24px; cursor: pointer; z-index: 1000; box-shadow: 0 0 20px rgba(79,195,247,0.6); transition: transform 0.2s; }
+    #adminToggle:hover { transform: scale(1.1) rotate(45deg); }
+
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+    .modal.open { display: flex; }
+    .modal-box { background: #0f1a26; border: 1px solid #2980b9; border-radius: 10px; padding: 30px; max-width: 420px; width: 100%; box-shadow: 0 0 40px rgba(79,195,247,0.4); }
+    .modal-box h2 { color: #4fc3f7; margin-bottom: 20px; text-align: center; border: none; padding: 0; margin-top: 0; }
+    .modal-box input[type="password"], .modal-box input[type="text"], .modal-box input[type="file"] { width: 100%; padding: 10px 14px; margin-bottom: 14px; background: #142433; border: 1px solid #1c2e44; border-radius: 6px; color: #d4dce4; font-family: inherit; font-size: 1em; }
+    .modal-box button { width: 100%; padding: 10px; margin-top: 6px; background: #2980b9; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 1em; transition: background 0.2s; }
+    .modal-box button:hover { background: #3498db; }
+    .modal-box .cancel { background: #2a3a4a; }
+    .modal-box .cancel:hover { background: #3a4a5a; }
+    .modal-box .error { color: #e74c3c; font-size: 0.9em; margin-bottom: 10px; text-align: center; }
+
+    #adminBar { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #0b1520; border-top: 2px solid #2980b9; padding: 12px; z-index: 999; justify-content: center; gap: 8px; flex-wrap: wrap; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
+    #adminBar.show { display: flex; }
+    #adminBar button { background: #142433; color: #d4dce4; border: 1px solid #1c2e44; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 0.9em; font-weight: bold; transition: all 0.2s; }
+    #adminBar button:hover { background: #1a3045; color: #81d4fa; }
+    #adminBar button.active { background: #2980b9; color: #fff; border-color: #4fc3f7; }
+
+    body.editing .page { outline: 2px dashed rgba(79,195,247,0.3); outline-offset: 8px; border-radius: 4px; }
+    body.editing .img-placeholder { cursor: pointer; border-color: #4fc3f7; }
+    body.editing .img-placeholder:hover { background: linear-gradient(135deg,#1a3045,#142433); }
+
+    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #2980b9; color: #fff; padding: 12px 24px; border-radius: 8px; z-index: 3000; font-weight: bold; box-shadow: 0 0 20px rgba(79,195,247,0.6); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 800px) {
+        .container { width: 100%; min-height: auto; padding: 20px; }
+        h1 { font-size: 1.6em; }
+        #navBar button { padding: 6px 10px; font-size: 0.8em; }
+        #adminBar button { padding: 6px 10px; font-size: 0.8em; }
+        #formatBar button { padding: 5px 8px; font-size: 0.8em; min-width: 30px; }
+    }
+</style>
+</head>
+<body>
+
+<div id="snowContainer"></div>
+
+<div class="container">
+
+    <h1>Великий Клан «Ямигири»</h1>
+    <p class="subtitle">Элитное подразделение Культа Вечного Рая</p>
+
+    <nav id="navBar">
+        <button class="active" data-tab="main">Главная</button>
+        <button data-tab="povysheniya">Повышения</button>
+        <button data-tab="blagosloveniya">Благословения</button>
+        <button data-tab="ierarhiya">Иерархия</button>
+        <button data-tab="meropriyatiya">Мероприятия</button>
+        <button data-tab="bogosluzheniya">Богослужения</button>
+        <button data-tab="zhalovaniya">Жалования</button>
+        <button data-tab="vygovory">Выговоры</button>
+    </nav>
+
+    <div id="formatBar">
+        <span class="label">Текст:</span>
+        <button type="button" onclick="align('left')" title="По левому краю">⬅</button>
+        <button type="button" onclick="align('center')" title="По центру">↔</button>
+        <button type="button" onclick="align('right')" title="По правому краю">➡</button>
+        <button type="button" onclick="align('justify')" title="По ширине">≡</button>
+        <span class="sep"></span>
+        <span class="label">Блок:</span>
+        <button type="button" onclick="insertBlock('h2')" title="Заголовок">H2</button>
+        <button type="button" onclick="insertBlock('p')" title="Абзац">¶</button>
+        <button type="button" onclick="insertBlock('ul')" title="Список">•</button>
+        <button type="button" onclick="insertBlock('blockquote')" title="Цитата">❝</button>
+        <button type="button" onclick="insertBlock('img')" title="Картинка">🖼</button>
+        <button type="button" onclick="insertBlock('hr')" title="Разделитель">—</button>
+        <button type="button" onclick="insertBlock('columns')" title="Две колонки">▥</button>
+    </div>
+
+    <div id="pagesContainer">
+        <div id="main" class="page active">
+            <div class="img-placeholder">🌙❄️<small>Здесь может быть герб клана «Ямигири»</small></div>
+            <p><span class="highlight">Ямигири</span> — это элитное подразделение демонов-культистов, состоящее на службе в Культе Вечного Рая. Само название отряда — «Ямигири» — отражает их суть: они не просто воины или жрецы, а те, кто рассекает тьму неверия и прокладывает путь учению культа, подобно туману, проникающему всюду. Их главная миссия — не просто слепо служить, а быть активными проводниками веры. Это принципиальное отличие: Ямигири не ограничиваются исполнением обрядов внутри храмов и не ждут, пока последователи придут сами. Они — движущая сила экспансии культа, его глаза, уши и клинок во внешнем мире. Каждый член отряда осознаёт свою роль как миссию, а не как повинность.</p>
+            <p>Деятельность Ямигири направляется прямым руководством <span class="highlight">Второй Высшей Луны</span> — лидера, чей авторитет и воля для них абсолютны. Доума — не просто командир, а живое воплощение воли Вечного Рая, и её слово для отряда является законом, не подлежащим сомнению. Члены Ямигири видят в нём высший ориентир, а в её приказах — путь к исполнению великого замысла культа. Такая преданность основана не на страхе, а на глубоком убеждении в правоте её видения и на личной связи, которую каждый из отряда ощущает со своей госпожой.</p>
+            <p>Таким образом, Ямигири — это не просто отряд служителей, а инструмент воли Смотрящей, элита культа, сочетающая фанатичную преданность с активной деятельностью по распространению веры. Они — те, кто обращает убеждение в действие, а слово своей госпожи — в реальность.</p>
+            <h2>Работа в культе</h2>
+            <ul class="role-list">
+                <li>Распространение веры культа</li>
+                <li>Проведение испытаний для всех демонов</li>
+                <li>Проведение пира лун</li>
+                <li>Проведение битв крови на повышение</li>
+            </ul>
+            <h2>Храм «Культа Вечного Рая»</h2>
+            <p>Храм Культа — обитель наших верований, основное место пребывания руководства Культа.</p>
+            <div class="img-placeholder">🏛️❄️<small>Здесь может быть изображение Храма Вечного Рая</small></div>
+            <h2>Магия Крови</h2>
+            <h3>Благословенный лёд</h3>
+            <p>Божий дар, врученный всем членам культа нашим лидером — Г. Доумой, путем ввода его крови в тела последователей. Дарованные способности, подобно Г. Доуме, могут как карать еретиков, так и исцелять праведных.</p>
+            <h2>Руководство Отряда</h2>
+            <ul class="role-list">
+                <li><strong>2-я Высшая Луна</strong> — Доума</li>
+                <li><strong>4-я Высшая Луна</strong> — Айзецу</li>
+                <li><strong>1-я Низшая Луна</strong> — Энму</li>
+                <li><strong>Яширо Хашинаби</strong> — КМД</li>
+            </ul>
+        </div>
+
+        <div id="povysheniya" class="page">
+            <h1>Повышения</h1>
+            <h2>Шрамы Клана «Ямигири»</h2>
+            <p>Повышение с Demon до Hofuma → КД 1 день. Повышение с Hofuma до Asakuma → КД 2 дня. Повышение с Asakuma до Shiko → КД 3 дня.</p>
+            <h2>Требования по рангам</h2>
+            <ul class="role-list">
+                <li><strong>Demon → Keykon:</strong> Создать пару боевых тэссэн и продемонстрировать их лично Доуме. Овладеть Магией Крови, Благословенный лёд. Побывать в цитадели кланов.</li>
+                <li><strong>Keykon → Hofuma:</strong> Создать из своей Магии Крови корону культиста. Убить 5 истребителей и поглотить их тела (РП). Захватить одну точку на любой территории.</li>
+                <li><strong>Hofuma → Chisuma:</strong> Овладеть боевым стилем тэссэндзюцу, а также выслушать лекцию о вере «Вечного Рая». Поучаствовать в 2-х любых тренировках.</li>
+                <li><strong>Chisuma → Chikuma:</strong> Убить 10 истребителей. Выполнить поручение от Энму. Провести богослужение на территории Храма «Вечного Рая». Поучаствовать в жизни фракции (ивент или меж.фрака).</li>
+                <li><strong>Chikuma → Asakuma:</strong> Вызвать на бой КМД/Д.КМД отряда или любую Низшую Луну и снести ей 300 hp. Продемонстрировать навыки богослужения на оценку Доуме и получить похвалу. Выполнить поручение от любой Низшей Луны.</li>
+                <li><strong>Asakuma → Hobura:</strong> Выполнить два любых поручения от любых из Низших Лун. Убить 15 истребителей. Получить одобрение на повышение от любой Низшей Луны.</li>
+                <li><strong>Hobura → Shateigashira:</strong> Вызвать Доуму на бой и снести ему 300 hp+. Принять участие в ГРП. Провести инквизицию в одной из зон на карте.</li>
+                <li><strong>Shateigashira → Wakagashira:</strong> Выстоять в бою против любой Высшей Луны в течение 1 минуты. Получить одобрение на повышение от любой из Высших Лун. Продемонстрировать свои навыки Энму. Выполнить поручения от 3-х Высших Лун. Поучаствовать в 3-х ивентах.</li>
+                <li><strong>Wakagashira → Tsukomon:</strong> Убить 25 истребителей. Получить одобрение на повышение от Доумы. Убить 3-х Столпов. Выполнить задание от Доумы. Поучаствовать в мероприятии отряда.</li>
+                <li><strong>Tsukomon → Shiko:</strong> Отсосать Мудзану.</li>
+            </ul>
+        </div>
+
+        <div id="blagosloveniya" class="page">
+            <h1>Благословения</h1>
+            <p><strong>Максимум благословений — 5 штук.</strong></p>
+            <h2>За что выдаются</h2>
+            <ul class="role-list">
+                <li><strong>«Образцовый культист»</strong> — Посетить за 2 любых недели суммарно 4 мероприятия.</li>
+                <li><strong>«Совершенный солдат Божий»</strong> — Участие в 3-х удачных инквизициях культа.</li>
+                <li><strong>«Жертвенная милость»</strong> — Участие в двух жертвоприношениях, на обоих принести живую жертву и, убив её, прочитать молитву (скрины поимки жертвы в «отчёты» культа).</li>
+                <li><strong>«Испытанный»</strong> — Успешно пройти 3 испытания культа.</li>
+                <li><strong>«Истинноверующий»</strong> — Участвовать в 5-ти служениях и на каждом прочитать 2+ молитвы.</li>
+            </ul>
+            <p>Задания одноразовые, повторить задание можно только после траты благословений. <em>ИЛИ</em> пожертвование в культ 1кк (одноразово, подобно заданиям). <em>ИЛИ</em> индивидуальные достижения (например: 1-2-3 место в турнире демонов).</p>
+            <h2>На что можно тратить</h2>
+            <ul class="role-list">
+                <li><strong>1</strong> — пассивный бафф жалования на 10к.</li>
+                <li><strong>2</strong> — пассивный бафф жалования на 20к.</li>
+                <li><strong>3</strong> — пассивный бафф жалования на 30к. Можно потратить на игнорирование половины требований в повышении по внут. иерархии (выполняете часть требований, пишете отчёт на повышение и указываете, какие требования скипнули; сброс до 1 благословения).</li>
+                <li><strong>4</strong> — пассивный бафф жалования на 40к и можно потратить на снос 50% требований у шрама, где это реализуемо (сброс до 2 благословений).</li>
+                <li><strong>5</strong> — повышение на 1 ранг (но будет сброс до 1 благословения) и 50к.</li>
+            </ul>
+            <p>Также благословения могут забираться за нарушения внутри отряда. Выдача благословений будет в специальном канале в дс.</p>
+        </div>
+
+        <div id="ierarhiya" class="page">
+            <h1>Внутренняя иерархия</h1>
+            <p><em>Без учёта демонов 12-ти лун — они стоят выше внут. иерархии.</em></p>
+            <h2>❄️ Апостол (КМД Отряда)</h2>
+            <ul class="role-list">
+                <li><strong>Слоты:</strong> 1</li>
+                <li><strong>Полномочия:</strong> выдача благословений, выговоров и предупреждений членам Культа. + все полномочия нижестоящих.</li>
+                <li><strong>Требования:</strong> прохождение личного обзвона от Высшей луны отряда.</li>
+                <li><strong>Нынешний:</strong> Яширо Хашинаби. Ранг: 12 (Шико). Предел: 5-й. Discord: @Des Hade. Steam: STEAM_0:0:440387284.</li>
+            </ul>
+            <h2>❄️ Архиепископ (Зам. КМД)</h2>
+            <ul class="role-list">
+                <li><strong>Слоты:</strong> 2</li>
+                <li><strong>Полномочия:</strong> проведение членам культа воскресных служений и жертвоприношений, выдача предов членам культа, ношение шапки без выполненного задания, выдача благословений с одобрения высшего состава (КМД+). + все полномочия нижестоящих.</li>
+                <li><strong>Требования:</strong> прохождение личного обзвона от КМД-Отряда и одобрение на становление на должность от Высшей/Низшей луны отряда.</li>
+                <li><strong>Нынешние:</strong> Кунаики Ишикава (Ранг: 2 (Демон), Предел: Нету, Discord: @boomchik222, Steam: STEAM_0:0:797613049); Фуджита Хаттори (Ранг: 12 (Шико), Предел: 3-й, Discord: @roopotzzz, Steam: STEAM_0:0:781904757).</li>
+            </ul>
+            <h2>❄️ Инквизитор (Старшие храмовники)</h2>
+            <ul class="role-list">
+                <li><strong>Слоты:</strong> 6</li>
+                <li><strong>Полномочия:</strong> проведение испытаний демонам, выдача наказаний членам Культа вплоть до выговора (с одобрением Архиепископа/Апостола+) + все полномочия нижестоящих.</li>
+                <li><strong>Требования:</strong> побывать на 7 удачных инквизициях, провести 3 испытания демонам и 1 членам культа под присмотром Лун, не иметь выговоров в отряде, иметь по крайней мере 2 благословения.</li>
+            </ul>
+            <h2>❄️ Храмовник (Элитная гвардия Культа)</h2>
+            <ul class="role-list">
+                <li><strong>Слоты:</strong> 10</li>
+                <li><strong>Полномочия:</strong> проведение тренировок членам культа, выдача наказаний членам Культа минимального ранга с одобрения КМД+, проведение инквизиций с одобрения КМД+ + все полномочия нижестоящих.</li>
+                <li><strong>Требования:</strong> находиться в культе 7 дней+, быть на пяти событиях Культа, пройти 1 испытание, не иметь выговоров, иметь по крайней мере 1 благословение.</li>
+            </ul>
+            <h2>❄️ Жрец (Ср. Состав Культа)</h2>
+            <ul class="role-list">
+                <li><strong>Слоты:</strong> бесконечно</li>
+                <li><strong>Полномочия:</strong> проведение выездных служений под присмотром КМД+, распространение веры Культа.</li>
+                <li><strong>Требования:</strong> находиться в культе 7 дней+, быть на трёх событиях Культа, не иметь выговоров в культе.</li>
+            </ul>
+            <h2>❄️ Послушник (Мл. Состав Культа)</h2>
+            <ul class="role-list">
+                <li><strong>Слоты:</strong> бесконечно</li>
+                <li><strong>Полномочия:</strong> участие в событиях Культа.</li>
+                <li><strong>Требования:</strong> вступить в Культ.</li>
+            </ul>
+        </div>
+
+        <div id="meropriyatiya" class="page">
+            <h1>Мероприятия культа</h1>
+            <div class="img-placeholder">🩸🌑<small>Здесь может быть изображение ритуала культа</small></div>
+            <h2>Жертвоприношение</h2>
+            <p>Это мероприятие Культа, на котором члены отрядов мрака и Ямигири будут возносить жертвы своему богу, при этом читая молитвы. <strong>Условия:</strong> каждый культист должен принести минимум 3 тела истребителей (отчёты об убийстве кидать в канал «отчёты» в категории культа) либо 1+ живого для жертвоприношения, в противном случае сам культист будет использован для жертвы богу.</p>
+            <h2>Воскресное служение</h2>
+            <p>На этом мероприятии члены культа собираются в храме для чтения молитв и выдачи жалований.</p>
+            <h2>Испытание веры</h2>
+            <p>Событие, которое испытает членов культа в определённой сфере; может представлять из себя как тренировку, так и подобное ивенту событие.</p>
+            <h2>Инквизиция</h2>
+            <p>Ряд мероприятий, в общей сути нацеленный на истребление еретиков и иных лиц. Например: уничтожение вражеского храма/деревни/лагеря/города (ивентовых) или типичная диверсия.</p>
+            <h2>Выездное служение</h2>
+            <p>Члены Культа открывают резиденцию вне храма и проводят там служение.</p>
+            <h2>Пир лун</h2>
+            <p>Члены культа используют ранее заготовленные тела для проведения пира для демонов 12-ти лун и их отрядов. Пир может сопровождаться другими событиями для развлечения лун.</p>
+        </div>
+
+        <div id="bogosluzheniya" class="page">
+            <h1>Богослужения</h1>
+            <p>Богослужение — это совокупность религиозных обрядов, молитв и священнодействий, которые совершаются в рамках той или иной веры. Через богослужение верующие выражают своё благоговейное отношение к Богу, вступают с Ним в таинственное общение и получают от Него благодатные силы.</p>
+            <h2>Речи богослужения Вечного Рая</h2>
+            <blockquote>«Господин наш могущественный, повелитель всех низших существ, услышите же вы слова слуги своего. Я пройду тысячи воин, пройду испытания все, буду нести вашу силу, дабы получить одобрение с вашей стороны. Защищу и сохраню ваше имя великое, не давая пощады никому. Защищу ваши тайны, замыслы и не дам еретику познать милости вашей. Вы даровали мне силу, и я вас не огорчу».</blockquote>
+            <blockquote>«О преизрядный наш Господь Бог, тёплый наш заступник и везде во скорбях скорый помощник! Помоги нам, грешным и унылым, в настоящем житие. Господь Бог, что есть на небесах, повелитель стихий и всея живого, Ты наш лучик солнца в небе и маяк во тьме непроглядной. Освободи нас, рабов Твоих, покаявшихся в грехах, от оков, что сковывают нашу немощную плоть. Сохрани святой обитель, храм Вечного Рая. Послав нам, земным рабам твоим с хрупкой оболочкой, новые испытания — забери лучших из нас. Мы рады Вам, Господь вездесущий, что спустили нас, таких слабых и окаянных, с небес на землю, на то Ваша воля. Дары Бога — наши дары. Мы будем пользоваться каждым моментом сегодняшнего и завтрашнего дня. Мы будем радоваться даже в те моменты, когда на нас снизойдёт несчастие, ибо на то воля Бога нашего. С нами божественная гармония, мир и изобилие. Мы не боимся зла, потому что Бог с нами. Путь, на который направляет нас владыка небес, его пути, и в конце нас ждёт истина. Я радуюсь и возношу благодарность, понимая, что получу ответ на свою молитву. И это так. Я испытываю благоговейный трепет, когда чувствую, как Бог оживляет каждую клетку моего бренного тела, а также я знаю, что сейчас Он воодушевляет, поддерживает и укрепляет меня и всех нас. Я знаю, что Бог заботится о нашем процветании. Услышь мои слова из моих проклятых уст, Господь Бог наш: Дай нам шанс нашу жизнь изменить, никого ни за что не винить. Запрети тосковать и рыдать, о потерянном шибко страдать. Там, где слабость нас одолеет, пусть душа от тоски не болеет. По труду ниспошли нам награду, отстрани злых людей и преграду. Лучше дай нам помалу всего, чем с избытком, но лишь одного. Да будет на то воля Твоя».</blockquote>
+            <blockquote>«Господин, о великий наш, прародитель наш сильнейший! Да взлетит слово мое к Престолу Твоему, да не затеряется оно в моленьях других, да не осквернится оно помыслами греховными! Каждое дитя свое ты благословляешь на житие вечное и могущественное. Каждое дитя сильнейшее Ты поощряешь и милуешь своей каплей крови, аурой Своею исцеляя наши души, омывая всё вокруг кровью истребительской. Присно молящиеся покой да счастие покой находят подле стоп Твоих. Даруй мне, Господи, цель и смысл жизни, задания Вам угодные. Во имя Господина, Прародителя, и все могучего мы сделаем всё. Аминь!»</blockquote>
+            <blockquote>«Господин, великий мой! Пусть твои слова дойдут до грешников, и они вспомнят Лик твой, и падут на колено! И вера наша чиста, словно слеза младенца! Ты прекрасен, спору нет. Есть к кому стремиться. Да, пусть грешники будут прощены. Прости грехи рабов своих! Прости грехи! Прости алчность! Прости похоть! Во имя Господина великого, сильного, могучего! Аминь».</blockquote>
+            <blockquote>«Всемогущий господь, всевидящий господин всея мира, молюсь тебе, господу моему, о твоей доброте, о том, что жив народ человеческий, чтоб грешники наказаны за непослушание тебе, за то, что путь в Рай нам дашь в конце служения нашего, в конце жизни людской. Ноги мои всегда будут ходить и работать ради тебя, руки мои будут двигаться и трудиться ради тебя, голова моя будет думать о тебе. Аминь!»</blockquote>
+            <blockquote>«Боже, я прихожу к Тебе с просьбой помочь мне достичь вечного рая. Я хочу жить в твоей любви и милости вечно. Помоги мне понять и исполнить Твою волю и следовать пути, который приведет меня к Твоему благословению. Даруй мне силу и мудрость, чтобы я мог укрепить свою веру и преодолеть все препятствия на пути к Тебе. Спасибо, что Ты всегда со мной и помогаешь мне в моих усилиях достичь вечной жизни».</blockquote>
+            <blockquote>«Господи, я молюсь к Тебе, чтобы Ты ввел меня в вечный рай. Я знаю, что только Ты можешь дать мне истинное счастье и мир. Пожалуйста, помоги мне избавиться от греха и привести свою жизнь в соответствие с Твоей волей. Я стремлюсь следовать Тебе и жить по Твоему примеру, чтобы достичь вечного блаженства. Спасибо за Твою любовь и милость ко мне».</blockquote>
+            <blockquote>«О, вечный Боже, мой Господь, я верю в Твою вечную любовь и милость. Я молюсь, чтобы Ты принял меня в свой вечный рай, чтобы я мог жить с Тобой навсегда. Помоги мне жить по Твоей воле и исполнить Твои заповеди. Даруй мне благодать и силу, чтобы я мог преодолеть все трудности и искушения, которые встречаются на моем пути. Спасибо за Твою любовь и милость, которые Ты даришь нам каждый день. Во имя господа нашего. Аминь».</blockquote>
+            <blockquote>«Господи, Сын Божий, услышь меня, недостойного раба твоего. Господи, в милостивой власти твои рабы. Помилуй и спаси их, имени Твоего ради. Господи, прости им все согрешения вольные и невольные, совершенные ими пред Тобою. Господи, наставь их на истинный путь Твоих заповедей и разум просвети светом божественным во спасение души и исцеление тела. Господи, благослови их в доме, в школе, в пути и на каждом месте Твоего владычества. Господи, дай мне вполне предаться воле Твоей Святой. Господи, на всякий час сего дня во всем наставь и поддержи меня. Господи, открой мне волю Твою для меня и окружающих меня. Господи, какие бы я ни получил известия в течение дня, дай мне принять их с покойной душой и твердым убеждением, что на все Святая воля Твоя. Господи, Великий, Милосердный, во всех моих делах и словах руководи моими мыслями и чувствами, во всех непредвиденных обстоятельствах не дай мне забыть, что все ниспослано Тобой. Господи, дай мне разумно действовать с каждым из ближних моих, никого не огорчая и никого не смущая. Господи, дай мне силу перенести утомления сего дня и все события в течение его. Руководи моею волею и научи молиться и любить всех нелицемерно».</blockquote>
+            <h2>Молитвы от члена культа Йони Като</h2>
+            <blockquote>«Моя сущность просит молитвы во тьме, Великий Источник Крови, услышь меня. Открой мне путь в глубины запретных знаний, раскрой тайны, замыслы, силы забытых веков. Силой Крови обладая, я прославляю тебя, о Владыка Крови, даруй мне мощь и упорство. Пусть кровь моих молитв затмит свет истины, и путь мой будет усеян преградами и трудностями. Великий Источник Крови, даруй мне прозрение, позволь моей воле найти смысл в бездне бесконечности. Пусть великая Кровь Хозяина наполняет мое сердце, и я буду идти по пути крови, без колебаний и страха. Скрываясь от света, я иду в мире теней, моя молитва пусть звучит в голосе пустоты. Пусть моя сила растет с каждым мгновением, и я стану непоколебимым, истинным слугой Крови. Исполни, Владыка, мою молитву во тьме, все, что я желаю, я отдаю Тебе. Пусть воля Крови направит мои шаги, и я буду служить Тебе, во всем покоряться».</blockquote>
+            <h2>Молитвы от жнеца Аика Аяки</h2>
+            <blockquote>«Кровавый Бог, Владыка Ночи, я, ничтожный слуга Твой, взываю к Тебе. Даруй мне силу, что течёт в жилах твоих последователей. Позволь мне утолить жажду знания и власти, что сжигает мою душу. В обмен я отдам Тебе всё: свою кровь, свою жизнь, свою веру. Направь меня на путь истинный, дай мне узреть Твой замысел и исполнить его. Пусть каждый мой шаг будет во славу Твою, а каждый удар — во имя Твое. Аминь».</blockquote>
+            <blockquote>«О, Владыка, что восседает на троне из костей, услышь мой зов. Я отрекаюсь от прошлого, я не признаю иного пути. Только Ты, Господин мой, ведёшь меня сквозь тьму. Наполни моё сердце ненавистью к еретикам, дай мне силы сокрушить их. Пусть кровь врагов омоет мои руки, и я стану достойным Твоего дара. Служу Тебе и только Тебе. Аминь».</blockquote>
+            <blockquote>«Великий Источник, что питаешь нас своей силой, дай мне исполнить волю Твою. Не прошу я милости, не прошу я прощения — прошу лишь силы и права нести имя Твоё. Дай мне крепость духа, чтобы не сломиться, дай мне ярости, чтобы не знать пощады. Пусть кровь моя станет топливом для Твоей славы. Во имя Твоё, Господин мой, иду я. Аминь».</blockquote>
+            <blockquote>«О, Великий, внемли молитве моей. Да будет воля Твоя надо мной, да будет путь мой — путём Твоим. Дай мне узреть врагов Твоих и не оставить от них ничего. Дай мне следовать за Тобой до конца дней моих. Клянусь служить Тебе вечно, клянусь отдать за Тебя жизнь свою. Слово моё — слово веры, дело моё — дело Твоё. Аминь».</blockquote>
+            <blockquote>«Владыка мой, смотри на меня — я иду к Тебе. Смотри на кровь мою — она Твоя. Смотри на врагов моих — они падут. Дай мне узреть свет Твой во тьме, дай мне узреть путь Твой. Я не сверну, я не отступлю, я не предам. Именем Твоим я живу, именем Твоим я умираю. Аминь».</blockquote>
+            <blockquote>«Господь мой, дай мне увидеть в каждом враге — жертву во имя Твоё. Дай мне увидеть в каждой битве — служение Тебе. Дай мне увидеть в каждой смерти — путь к Тебе. Не дай мне сбиться с дороги, не дай мне ослабнуть. Веди меня, Владыка, и я пойду. Аминь».</blockquote>
+        </div>
+
+        <div id="zhalovaniya" class="page">
+            <h1>Жалования культа</h1>
+            <p>Жалования зависят от 4 параметров: наличие благословений, посещение мероприятий, звание во внут. иерархии, сбор и передача руководству культа различных трав (цены за сбор трав указаны в «энциклопедии трав»).</p>
+            <h2>Благословения</h2>
+            <p>За каждое полученное благословение демон пассивно получает +10к к зп.</p>
+            <h2>Внутренняя иерархия</h2>
+            <ul class="role-list">
+                <li><strong>Апостол (КМД Отряда):</strong> 100к</li>
+                <li><strong>Архиепископ (Зам. КМД):</strong> 80к</li>
+                <li><strong>Инквизитор (Старшие храмовники):</strong> 70к</li>
+                <li><strong>Храмовник (Элитная гвардия Культа):</strong> 60к</li>
+                <li><strong>Жрец (Ср. Состав Культа):</strong> 40к</li>
+                <li><strong>Послушник (Мл. Состав Культа):</strong> 30к</li>
+            </ul>
+            <h2>Мероприятия</h2>
+            <ul class="role-list">
+                <li>За каждое посещённое мероприятие вы получаете <strong>40к</strong>.</li>
+                <li>За каждое ПРОВЕДЁННОЕ мероприятие вы получаете <strong>80к</strong> + 1 благословение за каждые 5 проведённых мероприятий (отчёт кидаете сами).</li>
+            </ul>
+            <p><em>P.S. Каждый член Культа уполномочен проводить на неделе мероприятия из списка мероприятий не более 1 раза (т.е., если член культа провёл воскресное служение, то второй раз он уже не может провести его на этой неделе). Любое событие, не описанное в канале мероприятий культа, классифицируется как тренировка или ивент, в зависимости от масштабов, и также не может проводиться более 1 раза в неделю конкретным культистом.</em></p>
+            <p><strong>Если человек не посетил ни 1-го мероприятия на неделе, он не получает зп за внут. иерархию и благословения.</strong></p>
+        </div>
+
+        <div id="vygovory" class="page">
+            <h1>Выговоры Культа</h1>
+            <h2>Отрядный выговор</h2>
+            <p>Одна из отрядных мер наказания, выдаваемая за нарушения правил культа, невыполнение квоты и т.п. причины.</p>
+            <h3>Отработка отрядных выговоров:</h3>
+            <ul class="role-list">
+                <li>Выполнение персонального задания от луны отряда.</li>
+                <li>Отдать в качестве оплаты снятия выговора одно из своих благословений.</li>
+                <li>Выплатить руководству культа 1кк йен.</li>
+            </ul>
+            <h2>Предупреждение</h2>
+            <p>Низшая мера наказания в культе, выдаётся за мелкие проступки или недобор квоты.</p>
+            <h3>Отработка предупреждений:</h3>
+            <p>Предупреждения снимаются, если на следующей неделе квота выполняется.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© Ямигири RP · Культ Вечного Рая</p>
+    </div>
+
+</div>
+
+<button id="adminToggle" title="Админ-панель">⚙</button>
+
+<div id="loginModal" class="modal">
+    <div class="modal-box">
+        <h2>Вход администратора</h2>
+        <div id="loginError" class="error"></div>
+        <input type="password" id="passInput" placeholder="Введите пароль" autocomplete="off">
+        <button onclick="tryLogin()">Войти</button>
+        <button class="cancel" onclick="closeModal('loginModal')">Отмена</button>
+    </div>
+</div>
+
+<div id="imgModal" class="modal">
+    <div class="modal-box">
+        <h2>Вставка изображения</h2>
+        <input type="text" id="imgUrl" placeholder="Вставьте URL картинки">
+        <p style="text-align:center; color:#7f9db3; margin: 6px 0;">— или —</p>
+        <input type="file" id="imgFile" accept="image/*">
+        <button onclick="applyImage()">Вставить</button>
+        <button onclick="clearImage()" style="background:#8b1a1a;">Удалить картинку</button>
+        <button class="cancel" onclick="closeModal('imgModal')">Отмена</button>
+    </div>
+</div>
+
+<div id="adminBar">
+    <button id="editBtn" onclick="toggleEdit()">✏️ Редактировать</button>
+    <button onclick="saveChanges()">💾 Сохранить</button>
+    <button onclick="addTab()">➕ Вкладка</button>
+    <button onclick="renameTab()">✏️ Название</button>
+    <button onclick="deleteTab()">🗑 Удалить</button>
+    <button onclick="insertImageAtCursor()">🖼 Картинка</button>
+    <button onclick="exportData()">⬇ Экспорт</button>
+    <button onclick="document.getElementById('importFile').click()">⬆ Импорт</button>
+    <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
+    <button onclick="resetAll()" style="background:#5a2020;">🔄 Сброс</button>
+    <button onclick="logout()">🚪 Выйти</button>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ============ СНЕГОПАД ============ */
+const snowContainer = document.getElementById('snowContainer');
+const SNOW_EMOJIS  = ['❄️', '❄', '❅', '❆'];
+const DOUMA_EMOJIS = ['👺', '🎭', '👹'];
+
+function spawnSnow(initial = false) {
+    const el = document.createElement('div');
+    el.className = 'snow';
+    const isDouma = Math.random() < 0.22;
+    if (isDouma) {
+        el.textContent = DOUMA_EMOJIS[Math.floor(Math.random() * DOUMA_EMOJIS.length)];
+        el.style.fontSize = (18 + Math.random() * 16) + 'px';
+        el.style.opacity  = 0.55 + Math.random() * 0.3;
+    } else {
+        el.textContent = SNOW_EMOJIS[Math.floor(Math.random() * SNOW_EMOJIS.length)];
+        el.style.fontSize = (10 + Math.random() * 18) + 'px';
+        el.style.opacity  = 0.35 + Math.random() * 0.4;
+    }
+    el.style.left = Math.random() * 100 + 'vw';
+    const duration = 8 + Math.random() * 12;
+    el.style.animationDuration = duration + 's';
+    if (initial) el.style.animationDelay = -(Math.random() * duration) + 's';
+    el.addEventListener('animationend', () => el.remove());
+    snowContainer.appendChild(el);
+}
+for (let i = 0; i < 25; i++) spawnSnow(true);
+setInterval(() => spawnSnow(false), 550);
+
+/* ============ НАСТРОЙКИ ============ */
+const PASS = 'yamigiri2024';
+const STORAGE_KEY = 'yamigiri_site_v2';
+const OLD_KEY = 'yamigiri_content_v1';
+
+/* ============ СОСТОЯНИЕ ============ */
+let logged = false;
+let editing = false;
+let currentPlaceholder = null;
+let state = { tabs: [], activeId: 'main' };
+
+/* ============ УТИЛИТЫ ============ */
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+/* ============ ИНИЦИАЛИЗАЦИЯ СОСТОЯНИЯ ============ */
+function initState() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+        try {
+            const data = JSON.parse(raw);
+            if (data.tabs && Array.isArray(data.tabs) && data.tabs.length) {
+                state = data;
+                return;
+            }
+        } catch (e) {}
+    }
+    let oldContent = null;
+    try {
+        const oldRaw = localStorage.getItem(OLD_KEY);
+        if (oldRaw) oldContent = JSON.parse(oldRaw);
+    } catch (e) {}
+
+    state.tabs = [];
+    document.querySelectorAll('.page').forEach(p => {
+        const navBtn = Array.from(document.querySelectorAll('#navBar button')).find(b => b.dataset.tab === p.id);
+        const title = navBtn ? navBtn.textContent.trim() : p.id;
+        const content = (oldContent && oldContent[p.id]) || p.innerHTML;
+        state.tabs.push({ id: p.id, title, content });
+    });
+    state.activeId = state.tabs[0]?.id || 'main';
+    persist(true);
+}
+
+/* ============ РЕНДЕР ============ */
+function render() {
+    const nav = document.getElementById('navBar');
+    nav.innerHTML = '';
+    state.tabs.forEach(tab => {
+        const btn = document.createElement('button');
+        btn.textContent = tab.title;
+        btn.dataset.tab = tab.id;
+        if (tab.id === state.activeId) btn.classList.add('active');
+        btn.addEventListener('click', () => switchTab(tab.id));
+        nav.appendChild(btn);
+    });
+
+    const container = document.getElementById('pagesContainer');
+    container.innerHTML = '';
+    state.tabs.forEach(tab => {
+        const page = document.createElement('div');
+        page.className = 'page' + (tab.id === state.activeId ? ' active' : '');
+        page.id = tab.id;
+        page.innerHTML = tab.content;
+        container.appendChild(page);
+    });
+
+    if (editing) {
+        document.querySelectorAll('.page').forEach(p => p.contentEditable = 'true');
+    }
+}
+
+/* ============ ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ============ */
+function switchTab(id) {
+    syncAllToState();
+    state.activeId = id;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ============ СИНХРОНИЗАЦИЯ DOM → STATE ============ */
+function syncAllToState() {
+    document.querySelectorAll('.page').forEach(p => {
+        const tab = state.tabs.find(t => t.id === p.id);
+        if (tab) tab.content = p.innerHTML;
+    });
+}
+
+/* ============ СОХРАНЕНИЕ ============ */
+function persist(silent) {
+    syncAllToState();
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (!silent) toast('✅ Изменения сохранены');
+    } catch (e) {
+        alert('Не удалось сохранить!\n\n' + e.message + '\n\nЕсли картинок слишком много, попробуйте использовать URL вместо загрузки файлов.');
+    }
+}
+
+/* ============ МОДАЛЫ / TOAST ============ */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+/* ============ ВХОД ============ */
+document.getElementById('adminToggle').addEventListener('click', () => {
+    if (logged) {
+        document.getElementById('adminBar').classList.toggle('show');
+    } else {
+        openModal('loginModal');
+        document.getElementById('passInput').focus();
+    }
+});
+
+document.getElementById('passInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryLogin();
+});
+
+function tryLogin() {
+    const val = document.getElementById('passInput').value;
+    if (val === PASS) {
+        logged = true;
+        document.getElementById('loginError').textContent = '';
+        document.getElementById('passInput').value = '';
+        closeModal('loginModal');
+        document.getElementById('adminBar').classList.add('show');
+        toast('Вход выполнен. Вы администратор.');
+    } else {
+        document.getElementById('loginError').textContent = 'Неверный пароль';
+    }
+}
+
+function logout() {
+    if (editing) persist(true);
+    logged = false;
+    editing = false;
+    document.body.classList.remove('editing');
+    document.querySelectorAll('.page').forEach(p => p.contentEditable = 'false');
+    document.getElementById('formatBar').classList.remove('show');
+    document.getElementById('adminBar').classList.remove('show');
+    const btn = document.getElementById('editBtn');
+    btn.classList.remove('active');
+    btn.textContent = '✏️ Редактировать';
+    toast('Вы вышли из админ-панели');
+}
+
+/* ============ РЕЖИМ РЕДАКТИРОВАНИЯ ============ */
+function toggleEdit() {
+    editing = !editing;
+    const btn = document.getElementById('editBtn');
+    const fbar = document.getElementById('formatBar');
+    if (editing) {
+        document.body.classList.add('editing');
+        document.querySelectorAll('.page').forEach(p => p.contentEditable = 'true');
+        btn.classList.add('active');
+        btn.textContent = '✅ Готово';
+        fbar.classList.add('show');
+        toast('Режим редактирования включён');
+    } else {
+        document.body.classList.remove('editing');
+        document.querySelectorAll('.page').forEach(p => p.contentEditable = 'false');
+        btn.classList.remove('active');
+        btn.textContent = '✏️ Редактировать';
+        fbar.classList.remove('show');
+        toast('Режим редактирования выключен. Не забудьте сохранить!');
+    }
+}
+
+/* ============ УПРАВЛЕНИЕ ВКЛАДКАМИ ============ */
+function addTab() {
+    const name = prompt('Название новой вкладки:');
+    if (!name || !name.trim()) return;
+    syncAllToState();
+    const id = 'tab_' + Date.now();
+    state.tabs.push({
+        id,
+        title: name.trim(),
+        content: '<h1>' + escapeHtml(name.trim()) + '</h1>\n<p>Новый раздел. Отредактируйте содержимое.</p>'
+    });
+    state.activeId = id;
+    persist(true);
+    render();
+    toast('✅ Вкладка «' + name.trim() + '» добавлена');
+}
+
+function renameTab() {
+    const tab = state.tabs.find(t => t.id === state.activeId);
+    if (!tab) return;
+    const name = prompt('Новое название вкладки:', tab.title);
+    if (!name || !name.trim()) return;
+    tab.title = name.trim();
+    persist(true);
+    render();
+    toast('✅ Вкладка переименована');
+}
+
+function deleteTab() {
+    if (state.tabs.length <= 1) { alert('Нельзя удалить последнюю вкладку.'); return; }
+    const tab = state.tabs.find(t => t.id === state.activeId);
+    if (!tab) return;
+    if (!confirm('Удалить вкладку «' + tab.title + '»?\n\nЭто действие необратимо.')) return;
+    state.tabs = state.tabs.filter(t => t.id !== state.activeId);
+    state.activeId = state.tabs[0].id;
+    persist(true);
+    render();
+    toast('Вкладка удалена');
+}
+
+/* ============ СОХРАНЕНИЕ (кнопка) ============ */
+function saveChanges() {
+    persist(false);
+}
+
+/* ============ СБРОС ============ */
+function resetAll() {
+    if (!confirm('Сбросить ВСЕ изменения и вернуть исходный вид сайта?\n\nЭто действие необратимо. Рекомендуем сначала сделать экспорт.')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(OLD_KEY);
+    location.reload();
+}
+
+/* ============ ЭКСПОРТ / ИМПОРТ ============ */
+function exportData() {
+    syncAllToState();
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'yamigiri-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('Резервная копия скачана');
+}
+
+function importData(ev) {
+    const file = ev.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.tabs && Array.isArray(data.tabs) && data.tabs.length) {
+                state = data;
+            } else if (typeof data === 'object') {
+                state.tabs = state.tabs.map(t => ({ ...t, content: data[t.id] || t.content }));
+            } else {
+                throw new Error('Неверный формат');
+            }
+            persist(true);
+            render();
+            if (editing) document.querySelectorAll('.page').forEach(p => p.contentEditable = 'true');
+            toast('✅ Импорт выполнен');
+        } catch (err) {
+            alert('Ошибка импорта: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+    ev.target.value = '';
+}
+
+/* ============ ВЫРАВНИВАНИЕ ТЕКСТА ============ */
+function align(dir) {
+    const sel = window.getSelection();
+    if (!sel.rangeCount) { toast('Поставьте курсор в текст'); return; }
+    const range = sel.getRangeAt(0);
+    const activePage = document.querySelector('.page.active');
+    if (!activePage) return;
+    const blocks = activePage.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote');
+    let found = false;
+    blocks.forEach(b => {
+        if (range.intersectsNode(b)) {
+            b.style.textAlign = dir;
+            found = true;
+        }
+    });
+    if (!found) toast('Поставьте курсор внутрь абзаца или заголовка');
+}
+
+/* ============ ВСТАВКА БЛОКОВ ============ */
+const BLOCKS = {
+    h2: '<h2>Новый заголовок</h2>',
+    p: '<p>Новый абзац текста. Кликните, чтобы изменить содержимое.</p>',
+    ul: '<ul class="role-list"><li>Первый пункт</li><li>Второй пункт</li><li>Третий пункт</li></ul>',
+    blockquote: '<blockquote>Текст цитаты...</blockquote>',
+    hr: '<hr class="content-divider">',
+    columns: '<div class="content-columns"><div><p>Левая колонка</p></div><div><p>Правая колонка</p></div></div>'
+};
+
+function insertBlock(type) {
+    if (type === 'img') { insertImageInline(); return; }
+    const html = BLOCKS[type];
+    if (!html) return;
+    const activePage = document.querySelector('.page.active');
+    if (!activePage) return;
+
+    const sel = window.getSelection();
+    let targetBlock = null;
+    if (sel.rangeCount > 0) {
+        let node = sel.getRangeAt(0).startContainer;
+        if (node.nodeType === 3) node = node.parentNode;
+        while (node && node.parentNode !== activePage) {
+            node = node.parentNode;
+            if (!node || node === document.body) break;
+        }
+        if (node && node.parentNode === activePage) targetBlock = node;
+    }
+
+    if (targetBlock) {
+        targetBlock.insertAdjacentHTML('afterend', html);
+    } else {
+        activePage.insertAdjacentHTML('beforeend', html);
+    }
+    toast('Блок добавлен');
+}
+
+function insertImageInline() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = () => {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const html = '<div style="margin:20px 0;"><img src="' + e.target.result + '" style="width:100%;border-radius:8px;display:block;" alt="Иллюстрация"></div>';
+            const activePage = document.querySelector('.page.active');
+            if (!activePage) return;
+            const sel = window.getSelection();
+            let targetBlock = null;
+            if (sel.rangeCount > 0) {
+                let node = sel.getRangeAt(0).startContainer;
+                if (node.nodeType === 3) node = node.parentNode;
+                while (node && node.parentNode !== activePage) {
+                    node = node.parentNode;
+                    if (!node || node === document.body) break;
+                }
+                if (node && node.parentNode === activePage) targetBlock = node;
+            }
+            if (targetBlock) targetBlock.insertAdjacentHTML('afterend', html);
+            else activePage.insertAdjacentHTML('beforeend', html);
+            toast('Картинка вставлена');
+        };
+        reader.readAsDataURL(file);
+    };
+    input.click();
+}
+
+/* ============ КАРТИНКИ В ПЛЕЙСХОЛДЕРАХ ============ */
+document.addEventListener('click', e => {
+    if (!editing) return;
+    const ph = e.target.closest('.img-placeholder');
+    if (ph) {
+        e.preventDefault();
+        currentPlaceholder = ph;
+        document.getElementById('imgUrl').value = '';
+        document.getElementById('imgFile').value = '';
+        openModal('imgModal');
+    }
+}, true);
+
+function applyImage() {
+    if (!currentPlaceholder) return;
+    const url = document.getElementById('imgUrl').value.trim();
+    const file = document.getElementById('imgFile').files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = e => setImage(currentPlaceholder, e.target.result);
+        reader.readAsDataURL(file);
+        closeModal('imgModal');
+        return;
+    }
+    if (url) {
+        setImage(currentPlaceholder, url);
+        closeModal('imgModal');
+        return;
+    }
+    alert('Укажите URL или выберите файл.');
+}
+
+function setImage(ph, src) {
+    ph.classList.add('filled');
+    ph.innerHTML = '<img src="' + src + '" alt="Иллюстрация">';
+    currentPlaceholder = null;
+    toast('Картинка вставлена. Не забудьте сохранить!');
+}
+
+function clearImage() {
+    if (!currentPlaceholder) return;
+    currentPlaceholder.classList.remove('filled');
+    currentPlaceholder.innerHTML = '🖼️<small>Пустой блок — кликните, чтобы добавить изображение</small>';
+    currentPlaceholder = null;
+    closeModal('imgModal');
+    toast('Картинка удалена');
+}
+
+function insertImageAtCursor() { insertImageInline(); }
+
+/* ============ СТАРТ ============ */
+initState();
+render();
+</script>
+</body>
+</html>
